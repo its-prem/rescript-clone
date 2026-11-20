@@ -1,4 +1,13 @@
-export type TranscriptLanguage = "en" | "es" | "fr" | "de" | "pt" | "zh" | "sv";
+export type TranscriptLanguage =
+  | "en"
+  | "hi"
+  | "hinglish"
+  | "es"
+  | "fr"
+  | "de"
+  | "pt"
+  | "zh"
+  | "sv";
 
 export interface TranscriptLanguageInfo {
   label: string;
@@ -22,6 +31,18 @@ export const TRANSCRIPT_LANGUAGES: Record<
     nativeLabel: "English",
     flag: "🇺🇸",
     code: "EN",
+  },
+  hi: {
+    label: "Hindi",
+    nativeLabel: "हिन्दी",
+    flag: "🇮🇳",
+    code: "HI",
+  },
+  hinglish: {
+    label: "Hinglish",
+    nativeLabel: "Hinglish",
+    flag: "🇮🇳",
+    code: "HN",
   },
   es: {
     label: "Spanish",
@@ -63,6 +84,8 @@ export const TRANSCRIPT_LANGUAGES: Record<
 
 export const TRANSCRIPT_LANGUAGE_ORDER: TranscriptLanguage[] = [
   "en",
+  "hi",
+  "hinglish",
   "es",
   "fr",
   "de",
@@ -76,6 +99,8 @@ export function isTranscriptLanguage(
 ): value is TranscriptLanguage {
   return (
     value === "en" ||
+    value === "hi" ||
+    value === "hinglish" ||
     value === "es" ||
     value === "fr" ||
     value === "de" ||
