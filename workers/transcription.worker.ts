@@ -1337,7 +1337,7 @@ async function runWhisper(
     }
   };
 
-  const asrOptions = {
+
 const isHindi =
     transcriptLanguage === "hi" || transcriptLanguage === "hinglish";
 
