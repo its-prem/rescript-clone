@@ -324,7 +324,9 @@ export default function ModelSelector({
 const SOURCE_ICONS: Record<TranscriptSource, IconComponent> = {
   base: SignalBarsLow,
   small: SignalBarsMedium,
+  medium: SignalBarsHigh,
   parakeet: SignalBarsHigh,
+  crisperTurbo: SignalBarsHigh,
   import: FileText,
 };
 
