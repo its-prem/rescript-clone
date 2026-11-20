@@ -2,11 +2,11 @@
 export type WhisperModel =
   | "base"
   | "small"
-  // | "medium"
+  | "medium"
   /** CrisperWhisper 2.0 Small, exported by tools/crisperwhisper-onnx. */
-  // | "crisperSmall"
+  | "crisperSmall"
   /** CrisperWhisper 2.0 Turbo, published ONNX export. */
-  // | "crisperTurbo";
+  | "crisperTurbo";
 /** NVIDIA Parakeet TDT 0.6B v3 via parakeet.js (ONNX / WebGPU). */
 export type ParakeetModel = "parakeet";
 export type ModelId = WhisperModel | ParakeetModel;
@@ -68,10 +68,10 @@ export type ModelInfo = WhisperModelInfo | ParakeetModelInfo;
 export const MODEL_ORDER: ModelId[] = [
   "base",
   "small",
-  // "medium",
+   "medium",
   "parakeet",
-  // "crisperSmall",
-  // "crisperTurbo",
+   "crisperSmall",
+  "crisperTurbo",
 ];
 
 const WHISPER_DTYPE = {
@@ -87,10 +87,10 @@ const WHISPER_DTYPE = {
  * {@link MODELS.parakeet} already does — fp16 encoder on WebGPU, int8 on WASM —
  * and keeps the q4 merged decoder that Base and Small are proven on.
  */
-// const WHISPER_MEDIUM_DTYPE = {
-//   webgpu: { encoder_model: "fp16", decoder_model_merged: "q4" },
-//   wasm: { encoder_model: "int8", decoder_model_merged: "q4" },
-// } satisfies WhisperModelInfo["dtype"];
+const WHISPER_MEDIUM_DTYPE = {
+  webgpu: { encoder_model: "fp16", decoder_model_merged: "q4" },
+  wasm: { encoder_model: "int8", decoder_model_merged: "q4" },
+} satisfies WhisperModelInfo["dtype"];
 
 /**
  * The local Small export ships only q4 for the merged decoder: int8 cannot
@@ -121,10 +121,10 @@ const WHISPER_DTYPE = {
  * transformers.js only fetches when `use_external_data_format` is declared, and
  * this repo's config.json does not declare it.
  */
-// const CRISPER_TURBO_DTYPE = {
-//   webgpu: { encoder_model: "q4", decoder_model_merged: "fp16" },
-//   wasm: { encoder_model: "q4", decoder_model_merged: "fp16" },
-// } satisfies WhisperModelInfo["dtype"];
+const CRISPER_TURBO_DTYPE = {
+  webgpu: { encoder_model: "q4", decoder_model_merged: "fp16" },
+  wasm: { encoder_model: "q4", decoder_model_merged: "fp16" },
+} satisfies WhisperModelInfo["dtype"];
 
 /**
  * No model conditions the decoder on a prefix, and that is a measured decision
@@ -179,10 +179,10 @@ const WHISPER_DTYPE = {
 export const MODELS: {
   base: WhisperModelInfo;
   small: WhisperModelInfo;
-  // medium: WhisperModelInfo;
+  medium: WhisperModelInfo;
   parakeet: ParakeetModelInfo;
-  // crisperSmall: WhisperModelInfo;
-  // crisperTurbo: WhisperModelInfo;
+  crisperSmall: WhisperModelInfo;
+  crisperTurbo: WhisperModelInfo;
 } = {
   base: {
     backend: "whisper",
