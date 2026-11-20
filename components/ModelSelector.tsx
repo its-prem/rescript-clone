@@ -326,6 +326,7 @@ const SOURCE_ICONS: Record<TranscriptSource, IconComponent> = {
   small: SignalBarsMedium,
   medium: SignalBarsHigh,
   parakeet: SignalBarsHigh,
+  crisperSmall: SignalBarsMedium,
   crisperTurbo: SignalBarsHigh,
   import: FileText,
 };
