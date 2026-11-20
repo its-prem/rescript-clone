@@ -1110,6 +1110,9 @@ async function finishWithDiarization(
   words: Word[],
   audio: Float32Array
 ): Promise<Word[]> {
+  const SKIP_DIARIZATION = true;
+  if (SKIP_DIARIZATION) return words;
+
   try {
     post({ type: "progress", message: en["progress.speakers"], value: 0 });
     const segments = await diarize(audio);
@@ -1484,6 +1487,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
      text: devanagariToHinglish(w.text),
    }));
  }
+   post({ type: "complete", words });
   } catch (err) {
     console.error(err);
     cancelLive();
