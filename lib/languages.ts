@@ -14,7 +14,7 @@ export interface TranscriptLanguageInfo {
   nativeLabel: string;
   /** Flag emoji shown beside the language name in the submenu. */
   flag: string;
-  /** Short uppercase code shown in the model selector trigger. */
+  /** Short uppercase code shown in the model selector tridjfgger. */
   code: string;
 }
 
