@@ -1338,22 +1338,17 @@ async function runWhisper(
   };
 
   const asrOptions = {
+const isHindi =
+    transcriptLanguage === "hi" || transcriptLanguage === "hinglish";
+
+  const asrOptions = {
     chunk_length_s: chunkLength,
     stride_length_s: stride,
     return_timestamps: "word" as const,
-    // Anti-repetition: Whisper-base on multi-minute audio often falls into
-    // loops like "little bit of a little bit of a…" near chunk boundaries
-    // or silence. Keep penalty mild — 1.15 truncates multi-speaker clips
-    // mid-utterance (second speaker dropped on continuous speech).
-    no_repeat_ngram_size: 4,
-    repetition_penalty: 1.05,
-    // Plain decoding — no forced decoder prefix. Priming the decoder collapses
-    // short VAD segments on every model here, whether with Whisper's
-    // <|startofprev|> filler prompt or CrisperWhisper's mode tags. See the note
-    // above MODELS in lib/models.ts; vad-regression-test.ts guards it.
-    language: transcriptLanguage === "hinglish" ? "hi" : transcriptLanguage,
+    ...(isHindi ? {} : { no_repeat_ngram_size: 4, repetition_penalty: 1.05 }),
+    task: "transcribe" as const,
+    language: isHindi ? "hi" : transcriptLanguage,
   };
-
   const rawWords: Word[] = [];
   const leadPadSamples = Math.floor(WHISPER_LEAD_PAD_S * VAD_SAMPLE_RATE);
   for (const seg of speechSegments) {
