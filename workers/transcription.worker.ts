@@ -1204,6 +1204,59 @@ async function runParakeet(
   );
   return finishWithDiarization(words, audio);
 }
+const DEVANAGARI_VOWELS: Record<string, string> = {
+  अ: "a", आ: "aa", इ: "i", ई: "ee", उ: "u", ऊ: "oo", ऋ: "ri",
+  ए: "e", ऐ: "ai", ओ: "o", औ: "au",
+};
+const DEVANAGARI_MATRAS: Record<string, string> = {
+  "ा": "a", "ि": "i", "ी": "ee", "ु": "u", "ू": "oo", "ृ": "ri",
+  "े": "e", "ै": "ai", "ो": "o", "ौ": "au", "्": "",
+};
+const DEVANAGARI_CONSONANTS: Record<string, string> = {
+  क: "k", ख: "kh", ग: "g", घ: "gh", ङ: "ng",
+  च: "ch", छ: "chh", ज: "j", झ: "jh", ञ: "ny",
+  ट: "t", ठ: "th", ड: "d", ढ: "dh", ण: "n",
+  त: "t", थ: "th", द: "d", ध: "dh", न: "n",
+  प: "p", फ: "ph", ब: "b", भ: "bh", म: "m",
+  य: "y", र: "r", ल: "l", व: "v", श: "sh", ष: "sh", स: "s", ह: "h",
+  क़: "q", ख़: "kh", ग़: "gh", ज़: "z", ड़: "r", ढ़: "rh", फ़: "f",
+};
+
+function devanagariToHinglish(text: string): string {
+  // Handle nukta combinations (e.g. ज + ़ = z, फ + ़ = f)
+  const normalized = text
+    .replace(/क\u093C/g, "क़").replace(/ख\u093C/g, "ख़").replace(/ग\u093C/g, "ग़")
+    .replace(/ज\u093C/g, "ज़").replace(/ड\u093C/g, "ड़").replace(/ढ\u093C/g, "ढ़")
+    .replace(/फ\u093C/g, "फ़");
+
+  let out = "";
+  for (let i = 0; i < normalized.length; i++) {
+    const ch = normalized[i];
+    const next = normalized[i + 1];
+
+    if (DEVANAGARI_CONSONANTS[ch]) {
+      out += DEVANAGARI_CONSONANTS[ch];
+      if (next && DEVANAGARI_MATRAS[next] !== undefined) {
+        out += DEVANAGARI_MATRAS[next];
+        i++;
+      } else if (next && (DEVANAGARI_CONSONANTS[next] || next === "ं" || next === "ँ")) {
+        // Word ke beech me 'a' sound lagayein, end me nahi (e.g. 'राम' -> 'ram', 'कमल' -> 'kamal')
+        out += "a";
+      }
+    } else if (DEVANAGARI_VOWELS[ch]) {
+      out += DEVANAGARI_VOWELS[ch];
+    } else if (ch === "ं" || ch === "ँ") {
+      out += "n";
+    } else if (ch === "ः") {
+      out += "h";
+    } else if (ch === "।") {
+      out += ".";
+    } else {
+      out += ch;
+    }
+  }
+  return out;
+}
 
 async function runWhisper(
   audio: Float32Array,
@@ -1295,7 +1348,7 @@ async function runWhisper(
     // short VAD segments on every model here, whether with Whisper's
     // <|startofprev|> filler prompt or CrisperWhisper's mode tags. See the note
     // above MODELS in lib/models.ts; vad-regression-test.ts guards it.
-    language: transcriptLanguage,
+    language: transcriptLanguage === "hinglish" ? "hi" : transcriptLanguage,
   };
 
   const rawWords: Word[] = [];
@@ -1338,7 +1391,8 @@ async function runWhisper(
           );
         },
         callback_function: (text: string) => {
-          partial += text;
+          partial +=
+  transcriptLanguage === "hinglish" ? devanagariToHinglish(text) : text;
           postPartial(partial);
           interpolateProgress();
         },
@@ -1424,7 +1478,12 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
     // Drop anything still queued: a stale "Transcribing… 99%" landing after
     // "complete" would put the UI back into its busy state.
     cancelLive();
-    post({ type: "complete", words });
+    if (transcriptLanguage === "hinglish") {
+   words = words.map((w) => ({
+     ...w,
+     text: devanagariToHinglish(w.text),
+   }));
+ }
   } catch (err) {
     console.error(err);
     cancelLive();
