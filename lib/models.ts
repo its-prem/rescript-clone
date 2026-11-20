@@ -100,10 +100,10 @@ const WHISPER_MEDIUM_DTYPE = {
  * combination verified end-to-end — encoder and decoder loaded in onnxruntime,
  * cross-attentions returned at the right shape.
  */
-// const CRISPER_SMALL_DTYPE = {
-//   webgpu: { encoder_model: "q4", decoder_model_merged: "q4" },
-//   wasm: { encoder_model: "q4", decoder_model_merged: "q4" },
-// } satisfies WhisperModelInfo["dtype"];
+const CRISPER_SMALL_DTYPE = {
+  webgpu: { encoder_model: "q4", decoder_model_merged: "q4" },
+  wasm: { encoder_model: "q4", decoder_model_merged: "q4" },
+} satisfies WhisperModelInfo["dtype"];
 
 /**
  * Turbo takes fp16 for the decoder rather than q4.
@@ -200,16 +200,16 @@ export const MODELS: {
     size: "~600 MB",
     dtype: WHISPER_DTYPE,
   },
-  // medium: {
-  //   backend: "whisper",
-  //   id: "onnx-community/whisper-medium_timestamped",
-  //   label: "Whisper Medium",
-  //   description:
-  //     "Best accuracy on accents, crosstalk and poor recordings. Slow, and a big download.",
-  //   // WASM int8 encoder + q4 decoder ~780 MB; WebGPU fp16 encoder ~1.1 GB.
-  //   size: "~1.1 GB",
-  //   dtype: WHISPER_MEDIUM_DTYPE,
-  // },
+  medium: {
+    backend: "whisper",
+    id: "onnx-community/whisper-medium_timestamped",
+    label: "Whisper Medium",
+    description:
+      "Best accuracy on accents, crosstalk and poor recordings. Slow, and a big download.",
+    // WASM int8 encoder + q4 decoder ~780 MB; WebGPU fp16 encoder ~1.1 GB.
+    size: "~1.1 GB",
+    dtype: WHISPER_MEDIUM_DTYPE,
+  },
   parakeet: {
     backend: "parakeet",
     id: "parakeet-tdt-0.6b-v3",
@@ -220,31 +220,31 @@ export const MODELS: {
     // WASM int8 encoder + fp16 decoder ~690 MB; WebGPU fp16 + fp32 ~1.3 GB.
     size: "~1.3 GB",
   },
-  // crisperSmall: {
-  //   backend: "whisper",
-  //   // Local folder under public/models — not published yet. Install with
-  //   // `python tools/crisperwhisper-onnx/install_local.py`.
-  //   id: "crisperwhisper-2.0-small-onnx",
-  //   local: true,
-  //   label: "CrisperWhisper Small (local)",
-  //   description:
-  //     "Verbatim: transcribes fillers as [UM] / [UH] instead of dropping them. Self-exported, unpublished. Non-commercial licence.",
-  //   // q4 encoder 66 MB + q4 merged decoder 258 MB.
-  //   size: "~324 MB",
-  //   dtype: CRISPER_SMALL_DTYPE,
-  //   crisper: true,
-  // },
-  // crisperTurbo: {
-  //   backend: "whisper",
-  //   id: "Masterx/CrisperWhisper2.0-turbo-ONNX",
-  //   label: "CrisperWhisper Turbo",
-  //   description:
-  //     "Keeps fillers, on a large-v3 encoder. The largest download. Non-commercial licence.",
-  //   // q4 encoder 425 MB + fp16 merged decoder 477 MB.
-  //   size: "~900 MB",
-  //   dtype: CRISPER_TURBO_DTYPE,
-  //   crisper: true,
-  // },
+  crisperSmall: {
+    backend: "whisper",
+    // Local folder under public/models — not published yet. Install with
+    // `python tools/crisperwhisper-onnx/install_local.py`.
+    id: "crisperwhisper-2.0-small-onnx",
+    local: true,
+    label: "CrisperWhisper Small (local)",
+    description:
+      "Verbatim: transcribes fillers as [UM] / [UH] instead of dropping them. Self-exported, unpublished. Non-commercial licence.",
+    // q4 encoder 66 MB + q4 merged decoder 258 MB.
+    size: "~324 MB",
+    dtype: CRISPER_SMALL_DTYPE,
+    crisper: true,
+  },
+  crisperTurbo: {
+    backend: "whisper",
+    id: "Masterx/CrisperWhisper2.0-turbo-ONNX",
+    label: "CrisperWhisper Turbo",
+    description:
+      "Keeps fillers, on a large-v3 encoder. The largest download. Non-commercial licence.",
+    // q4 encoder 425 MB + fp16 merged decoder 477 MB.
+    size: "~900 MB",
+    dtype: CRISPER_TURBO_DTYPE,
+    crisper: true,
+  },
 };
 
 /**
